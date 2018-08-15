@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<link rel="stylesheet" href="https://npmcdn.com/sweetalert2@4.0.15/dist/sweetalert2.min.css">
+<script src="https://npmcdn.com/sweetalert2@4.0.15/dist/sweetalert2.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src= "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js" charset="utf-8"></script>
+  <script src="js/angular-chart.min.js"></script>
+  <script src="js/main.js"></script>
+  <script src = "https://cdn.zingchart.com/zingchart.min.js" ></script>  
+  <script src = "https://cdn.zingchart.com/angular/zingchart-angularjs.js" ></script> 
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <meta name="google-signin-client_id" content="852521934104-53fctdku5insugcv04iejnloqjqjtmot.apps.googleusercontent.com"></meta>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<title>workout logger</title>
+</head>
+<body>
+<style>
+	.workoutEntry:hover {
+		color: red;
+		cursor:pointer;
+		border-color: cyan!important;
+	}
+	.radio-inline:hover {
+		color: green;
+	}
+	.radio-toolbar input[type="radio"] {
+  display: none;
+}
+
+.radio-toolbar label:hover {
+  color: blue;
+}
+
+.radio-toolbar label {
+  display: inline-block;
+  background-color: #ddd;
+  padding: 4px 11px;
+  font-family: Arial;
+  font-size: 16px;
+  cursor: pointer;
+}
+	.radio-toolbar input[type="radio"]:checked+label {
+	background-color: green;
+}
+</style>
+	<div ng-app="myApp" ng-controller="myCtrl">
+	<div style="border: solid thin black; height:675px; width:80%; margin-left:10%; margin-top:5%;">
+	
+	<div class="g-signin2" data-onsuccess="onSignIn"></div>
+	
+	
+	<div class="col-sm-8" style="height:100%; border-right: thin dotted black;">
+	<h3>Workout log</h3>
+    	<p>This is your personal workout log.
+    	Create log entries and visualize your data.</p>
+<table class="table">
+	<thead>
+      <tr>
+        <th>workout</th>
+        <th>date</th>
+        <th>duration</th>
+      </tr>
+	</thead>
+	<tbody>
+  <tr ng-repeat="x in workouts" class = "workoutEntry" data-toggle="modal" data-target="#myModal" ng-click="selectWorkout(x);">
+    <td>{{ x.type }}</td>
+    <td>{{ x.date | date }}</td>
+    <td>{{ x.duration }} mins</td>
+  </tr>
+  </tbody>
+</table>
+
+<button data-toggle="modal" data-target="#addWorkout">add</button>
+</div>
+
+<!-- START: Exercise Analyzer -->
+<div style="height:100%;" class="col-sm-4">
+	<div style="border-bottom: thin dotted black;">
+		<h3>Exercise Analyzer</h3>
+		
+		<p>Analyzing weight for exercise: <select ng-model="analyzedExercise" ng-options="x for x in names | orderBy:x" ng-change="recalculateLineGraph()">
+		</select></p> <br/>
+		<p>Max: {{maxWeight}}</p> <p>Min: {{minWeight}}</p>
+		<p>Average: {{avgWeight}}</p>
+		<p>Occurances: {{exerciseOccurence}}</p>
+		<zingchart id = "myChart" zc-json = "myJson" zc-height = 200 zc-width = 300 ></zingchart> 
+	</div>
+	<br/>
+	<div style="height:200px;width:200px;">
+	<canvas id="doughnut" class="chart chart-doughnut"
+  chart-data="data" chart-labels="labels">
+</canvas> 
+	</div>
+</div>
+</div>
+<!-- END: Exercise Analyzer -->
+
+<div class="modal fade" id="addWorkout" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Workout Header</h4>
+        </div>
+        <div class="modal-body">
+          <div class="radio-toolbar">
+			  <input type="radio" ng-model="newWorkout.type" value="Full Body" id="FullBody"><label for="FullBody">Full Body</label>
+			  <input type="radio" ng-model="newWorkout.type" value="Chest" id="chest"><label for="chest">Chest</label>
+			  <input type="radio" ng-model="newWorkout.type" value="Arms" id="arms"><label for="arms">Arms</label>
+			  <input type="radio" ng-model="newWorkout.type" value="Back" id="back"><label for="back">Back</label>
+			  <input type="radio" ng-model="newWorkout.type" value="Shoulders" id="shoulders"><label for="shoulders">Shoulders</label>
+			  <input type="radio" ng-model="newWorkout.type" value="Legs" id="legs"><label for="legs">Legs</label>
+			  <input type="radio" ng-model="newWorkout.type" value="Cardio" id="cardio"><label for="cardio">Cardio Only</label><br/> <br/>
+  		  </div>
+          Workout type: <p>{{newWorkout.type}}</p><br/>
+          Duration: <input type="number" step="5" ng-model="newWorkout.duration"/> mins<br/><br/>
+          Date: <input type="date" ng-model="newWorkout.date"/><br/><br/>
+          Cardio:
+    	<input type="checkbox" ng-model="newWorkout.cardio">
+          <input type="number" min="0" max="100" step="5" ng-model="newWorkout.cardioDuration" ng-show="newWorkout.cardio"/>
+          <table class="table" ng-show="newWorkout.type != 'Cardio'">
+	<thead>
+      <tr>
+        <th>exercise</th>
+        <th>weight</th>
+        <th>sets</th>
+      </tr>
+	</thead>
+			  <tr ng-repeat="x in newWorkout.exercises">
+			    <td><input type="search" ng-model="x.name"/></td>
+			    <td><input type="text" ng-model="x.weight"/></td>
+			    <td><input type="number" ng-model="x.sets"/></td>
+			  </tr>
+		  </table>
+		  <button ng-click="addNewExercise()" ng-show="newWorkout.type != 'Cardio'">Add</button>
+        </div>
+        <div class="modal-footer">
+          <button ng-click="addNewWorkout()" data-dismiss="modal">Submit</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Workout Header</h4>
+        </div>
+        <div class="modal-body">
+          workout type: <p>{{selectedWorkout.type}}</p><br/>
+          workout duration: <p>{{selectedWorkout.duration}} mins</p><br/>
+          date: <p>{{selectedWorkout.date | date}}</p><br/>
+          cardio: <p>{{selectedWorkout.cardioDuration}}</p> mins<br/>
+          <table class="table">
+	<thead>
+      <tr>
+        <th>exercise</th>
+        <th>weight</th>
+        <th>sets</th>
+      </tr>
+	</thead>
+			  <tr ng-repeat="x in selectedWorkout.exercises">
+			    <td>{{ x.name }}</td>
+			    <td>{{ x.weight }}</td>
+			    <td>{{ x.sets }}</td>
+			  </tr>
+		  </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+	</div>
+</body>
+</html>
