@@ -4,7 +4,7 @@ RUN mkdir project
 
 COPY . project
 
-RUN cd project
+WORKDIR project
 
 RUN ls
 
