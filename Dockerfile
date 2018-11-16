@@ -12,4 +12,4 @@ RUN ./mvnw -DskipTests=true package
 
 EXPOSE 8080
 
-CMD java project/target/workout-0.0.1.jar
+CMD java - jar project/target/workout-0.0.1.jar
