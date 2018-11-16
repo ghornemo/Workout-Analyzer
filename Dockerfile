@@ -10,6 +10,6 @@ RUN ls
 
 RUN ./mvnw -DskipTests=true package
 
-EXPOSE 80
+EXPOSE 8080
 
-CMD java project/target/workout-0.0.1.jar --server.port=80
+CMD java project/target/workout-0.0.1.jar
