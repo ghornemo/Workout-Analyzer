@@ -10,6 +10,7 @@ RUN ls
 
 RUN ./mvnw -DskipTests=true package
 
-EXPOSE 80
+EXPOSE 8080
 
-ENTRYPOINT ["java","=Dserver.port=80","-jar","target/workout-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","target/workout-0.0.1-SNAPSHOT.jar"]
+
