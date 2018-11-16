@@ -1,5 +1,7 @@
 FROM openjdk:8-jdk-alpine
 
+VOLUME /tmp
+
 RUN mkdir project
 
 COPY . project
