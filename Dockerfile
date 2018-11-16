@@ -10,6 +10,6 @@ RUN ls
 
 RUN ./mvnw -DskipTests=true package
 
-EXPOSE 8080
+EXPOSE 80
 
-ENTRYPOINT ["java","-jar","project/target/workout-0.0.1.jar"]
+ENTRYPOINT ["java","=Dserver.port=80","-jar","project/target/workout-0.0.1.jar"]
