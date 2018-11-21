@@ -13,6 +13,5 @@ RUN ls
 RUN ./mvnw -DskipTests=true package
 
 EXPOSE 8080
-
-RUN java -jar target/workout-0.0.1-SNAPSHOT.jar&
+ENTRYPOINT ["java", "-jar", "target/workout-0.0.1-SNAPSHOT.jar"]
 
